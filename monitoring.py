@@ -48,7 +48,7 @@ def send_email(subject, body, to_email, from_email, password=None,attachment=Non
         
         
         
-def create_backup(source_paths, backup_dir, email_config=None , max_zip_size_mb=20 , attach_zip=True):
+def create_backup(source_paths, backup_dir, email_config=None , max_zip_size_mb=20 , attach_zip=False):
     
     logz.info(f"Backup started from dest: {source_paths} , to {backup_dir}")
     
@@ -85,7 +85,9 @@ def create_backup(source_paths, backup_dir, email_config=None , max_zip_size_mb=
         
         zip_size_mb = get_file_size_mb(zip_path)
         logz.info(f"Zip size is {zip_size_mb:.2f} MB")
-        attach = zip_path if attach_zip and zip_size_mb <= max_zip_size_mb else None
+        attach = ["backup.log"]
+        if attach_zip and zip_size_mb <= max_zip_size_mb:
+            attach.append(zip_path)
         if attach_zip and zip_size_mb > max_zip_size_mb:
             logz.warning(f"Zip too large than required it's : {zip_size_mb:.2f} MB")
         
@@ -119,7 +121,8 @@ def create_backup(source_paths, backup_dir, email_config=None , max_zip_size_mb=
                 to_email=email_config['to'],
                 from_email=email_config['from'],
                 password=email_config.get('password'),
-                oauth_file=email_config.get('oauth_file')
+                oauth_file=email_config.get('oauth_file'),
+                attachment=["backup.log"]
             )
         return False
         
@@ -138,7 +141,7 @@ if __name__ == "__main__":
     parser.add_argument('--smtp-password', help="App password (if no OAuth)")
     parser.add_argument('--oauth-file', help="Path to OAuth JSON creds (safer, no password)")
     parser.add_argument('--max-zip-size' , type=float , default= 20, help="max size for the ZIP in Mb")
-    parser.add_argument('--attach-zip' , action='store_true' , default=True , help="Attach file or not ?")
+    parser.add_argument('--attach-zip' , action='store_true' , default=False , help="Attach file or not ?")
     
     
     
