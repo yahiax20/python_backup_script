@@ -6,4 +6,4 @@ Python backup tool with:
 
 ## Run
 ```bash
-python monitoring.py --sources ~/docs --attach-zip
+python monitoring.py --sources ~/docs --email-to me@gmail.com --email-from bot@gmail.com --smtp-password "pass"
